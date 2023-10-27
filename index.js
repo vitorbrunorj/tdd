@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 function helloWord() {
   console.log('Hello Word');
 }
