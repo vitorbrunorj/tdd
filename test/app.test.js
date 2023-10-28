@@ -8,3 +8,11 @@ test('Deve responder na raiz', () => {
       expect(res.status).toBe(200);
     });
 });
+
+test('Deve inserir um usuário com sucesso', () => {
+  return request(app)
+    .get('/')
+    .then((res) => {
+      expect(res.status).toBe(200);
+    });
+});
