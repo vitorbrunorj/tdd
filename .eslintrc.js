@@ -36,6 +36,5 @@ module.exports = {
     'react-hooks/rules-of-hooks': 'error',
     'react-hooks/exhaustive-deps': 'warn',
     'import/prefer-default-export': 0,
-    'arrow-body-style': 'off',
   },
 };
