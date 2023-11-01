@@ -33,3 +33,30 @@ test('Deve listar todas as contas', async () => {
   expect(result.status).toBe(200);
   expect(result.body.length).toBeGreaterThan(0);
 });
+
+test('Deve retornar uma conta por Id', async () => {
+  const acc = await app
+    .db('accounts')
+    .insert({ name: 'Acc By Id', user_id: user.id }, ['id']);
+
+  const result = await request(app).get(`${MAIN_ROUTE}/${acc[0].id}`);
+
+  expect(result.status).toBe(200);
+  expect(result.body.name).toBe('Acc By Id');
+  expect(result.body.user_id).toBe(user.id);
+});
+
+/*
+User
+test('Deve retornar uma conta por Id', () => {
+  return app.db('accounts');
+  insert({ name: 'Acc By Id', user_id: user.id }, ['id'])
+    .then((acc) => request(app).get(`${MAIN_ROUTE}/${acc[0].id}`))
+    .then((res) => {
+      expect(result.status).toBe(200);
+      expect(result.body.name).toBe('Acc By Id');
+      expect(result.body.user_id).toBe(user.id);
+    });
+});
+
+ */

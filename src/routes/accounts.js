@@ -9,5 +9,9 @@ module.exports = (app) => {
     res.status(200).json(result);
   };
 
-  return { create, getAll };
+  const get = async (req, res) => {
+    const result = await app.services.account.find({ id: req.params.id });
+    res.status(200).json(result);
+  };
+  return { create, getAll, get };
 };
