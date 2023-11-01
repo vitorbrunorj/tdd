@@ -13,5 +13,16 @@ module.exports = (app) => {
     const result = await app.services.account.find({ id: req.params.id });
     res.status(200).json(result);
   };
-  return { create, getAll, get };
+
+  const update = async (req, res) => {
+    const result = await app.services.account.update(req.params.id, req.body);
+    res.status(200).json(result[0]);
+  };
+
+  return {
+    create,
+    getAll,
+    get,
+    update,
+  };
 };
