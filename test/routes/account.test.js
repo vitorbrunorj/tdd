@@ -22,7 +22,6 @@ test('Deve inserir uma conta com sucesso', async () => {
   expect(result.status).toBe(201);
   expect(result.body.name).toBe('Acc #1');
 });
-
 test('Deve listar todas as contas', async () => {
   await app.db('accounts').insert({
     name: 'Acc list',
