@@ -30,6 +30,8 @@ module.exports = {
     SharedArrayBuffer: 'readonly',
   },
 
+  printWidth: 80,
+
   rules: {
     'prettier/prettier': 2,
     'react/jsx-filename-extension': 0,

@@ -13,15 +13,34 @@ beforeAll(async () => {
   user = { ...res[0] };
 });
 
+
 test('Deve inserir uma conta com sucesso', async () => {
-  const res = await request(app).post(MAIN_ROUTE).send({
+  const result = await request(app).post(MAIN_ROUTE).send({
     name: 'Acc #1',
     user_id: user.id,
   });
 
-  expect(res.status).toBe(201);
-  expect(res.body.name).toBe('Acc #1');
+  expect(result.status).toBe(201);
+  expect(result.body.name).toBe('Acc #1');
 });
+
+test('Não deve inserir uma conta sem nome', async () => {
+  const result = await request(app).post(MAIN_ROUTE).send({ user_id: user.id });
+
+  expect(result.status).toBe(400);
+  expect(result.body.error).toBe('Nome é um atributo obrigatório');
+});
+
+/* test('Não deve inserir uma conta sem nome', () => {
+  return request(app).post(MAIN_ROUTE);
+  send({ user_id: user.id }).then((result) => {
+    expect(result.status).toBe(400);
+    expect(result.body.error).toBe('Nome é um atributo obrigatório');
+  });
+}); */
+test.skip('Não deve inserir uma conta de nome duplicado, para o mesmo usuário', () => {});
+
+
 test('Deve listar todas as contas', async () => {
   await app.db('accounts').insert({
     name: 'Acc list',
@@ -34,6 +53,8 @@ test('Deve listar todas as contas', async () => {
   expect(res.body.length).toBeGreaterThan(0);
 });
 
+test.skip('Deve listar apenas as constas do usuário', () => {});
+
 test('Deve retornar uma conta por Id', async () => {
   const acc = await app
     .db('accounts')
@@ -45,6 +66,8 @@ test('Deve retornar uma conta por Id', async () => {
   expect(res.body.name).toBe('Acc By Id');
   expect(res.body.user_id).toBe(user.id);
 });
+
+test.skip('Não deve retornar uma conta de outro usuário', () => {});
 
 test('Deve alterar a conta', async () => {
   const acc = await app
@@ -59,6 +82,9 @@ test('Deve alterar a conta', async () => {
   expect(res.body.name).toBe('Acc Updated');
 });
 
+test.skip('Não deve alterar uma conta de outro usuário', () => {});
+
+
 test('Deve remover uma conta', async () => {
   const acc = await app
     .db('accounts')
@@ -67,9 +93,12 @@ test('Deve remover uma conta', async () => {
   expect(res.status).toBe(204);
 });
 
+test.skip('Não deve remover uma conta de outro usuário', () => {});
+
+
 /*
 
-User
+
 test('Deve remover uma conta', () =>
   app
     .db('accounts')
