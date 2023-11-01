@@ -5,22 +5,22 @@ const MAIN_ROUTE = '/accounts';
 let user;
 
 beforeAll(async () => {
-  const result = await app.services.user.save({
+  const res = await app.services.user.save({
     name: 'User account',
     mail: `${Date.now()}@email.com`,
     passwd: '123456',
   });
-  user = { ...result[0] };
+  user = { ...res[0] };
 });
 
 test('Deve inserir uma conta com sucesso', async () => {
-  const result = await request(app).post(MAIN_ROUTE).send({
+  const res = await request(app).post(MAIN_ROUTE).send({
     name: 'Acc #1',
     user_id: user.id,
   });
 
-  expect(result.status).toBe(201);
-  expect(result.body.name).toBe('Acc #1');
+  expect(res.status).toBe(201);
+  expect(res.body.name).toBe('Acc #1');
 });
 test('Deve listar todas as contas', async () => {
   await app.db('accounts').insert({
@@ -28,10 +28,10 @@ test('Deve listar todas as contas', async () => {
     user_id: user.id,
   });
 
-  const result = await request(app).get(MAIN_ROUTE);
+  const res = await request(app).get(MAIN_ROUTE);
 
-  expect(result.status).toBe(200);
-  expect(result.body.length).toBeGreaterThan(0);
+  expect(res.status).toBe(200);
+  expect(res.body.length).toBeGreaterThan(0);
 });
 
 test('Deve retornar uma conta por Id', async () => {
@@ -39,11 +39,11 @@ test('Deve retornar uma conta por Id', async () => {
     .db('accounts')
     .insert({ name: 'Acc By Id', user_id: user.id }, ['id']);
 
-  const result = await request(app).get(`${MAIN_ROUTE}/${acc[0].id}`);
+  const res = await request(app).get(`${MAIN_ROUTE}/${acc[0].id}`);
 
-  expect(result.status).toBe(200);
-  expect(result.body.name).toBe('Acc By Id');
-  expect(result.body.user_id).toBe(user.id);
+  expect(res.status).toBe(200);
+  expect(res.body.name).toBe('Acc By Id');
+  expect(res.body.user_id).toBe(user.id);
 });
 
 test('Deve alterar a conta', async () => {
@@ -59,7 +59,30 @@ test('Deve alterar a conta', async () => {
   expect(res.body.name).toBe('Acc Updated');
 });
 
-/* test('Deve alterar a conta', () =>
+test('Deve remover uma conta', async () => {
+  const acc = await app
+    .db('accounts')
+    .insert({ name: 'Acc To Remove', user_id: user.id }, ['id']);
+  const res = await request(app).delete(`${MAIN_ROUTE}/${acc[0].id}`);
+  expect(res.status).toBe(204);
+});
+
+/*
+
+User
+test('Deve remover uma conta', () =>
+  app
+    .db('accounts')
+    .insert({ name: 'Acc To Remove', idesr_id: user.id }, { id })
+    .then((acc) => request(app).delete(`${MAIN_ROUTE}/${acc[0].id}`))
+    .then((res) => {
+      expect(res.status).toBe(204);
+
+    });
+
+});
+
+test('Deve alterar a conta', () =>
   app
     .db('accounts')
     .insert({ name: 'Acc To Update', user_id: user.id }, ['id'])
