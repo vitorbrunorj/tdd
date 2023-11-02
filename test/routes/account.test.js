@@ -45,10 +45,19 @@ test('Não deve inserir uma conta sem nome', async () => {
   expect(result.body.error).toBe('Nome é um atributo obrigatório');
 });
 
-test.skip('Não deve inserir uma conta de nome duplicado, para o mesmo usuário', () => {});
+test('Não deve inserir uma conta de nome duplicado, para o mesmo usuário', async () => {
+  await app.db('accounts').insert({ name: 'Acc Duplicado', user_id: user.id });
+
+  const res = await request(app)
+    .post(MAIN_ROUTE)
+    .set('authorization', `Bearer ${user.token}`)
+    .send({ name: 'Acc Duplicado' });
+
+  expect(res.status).toBe(400);
+  expect(res.body.error).toBe('Já existe uma conta com esse nome');
+});
 
 test('Deve listar apenas as contas do usuário', async () => {
-  // Inserindo contas no banco de dados
   await app.db('accounts').insert([
     { name: 'Acc User #1', user_id: user.id },
     { name: 'Acc User #2', user_id: user2.id },
