@@ -4,8 +4,9 @@ const app = require('../../src/app');
 
 const MAIN_ROUTE = '/v1/accounts';
 let user;
+let user2;
 
-beforeAll(async () => {
+beforeEach(async () => {
   const res = await app.services.user.save({
     name: 'User account',
     mail: `${Date.now()}@email.com`,
@@ -13,6 +14,13 @@ beforeAll(async () => {
   });
   user = { ...res[0] };
   user.token = jwt.encode(user, 'Segredo!');
+
+  const res2 = await app.services.user.save({
+    name: 'User account #2',
+    mail: `${Date.now()}@email.com`,
+    passwd: '123456',
+  });
+  user2 = { ...res2[0] };
 });
 
 test('Deve inserir uma conta com sucesso', async () => {
@@ -21,7 +29,6 @@ test('Deve inserir uma conta com sucesso', async () => {
     .set('authorization', `Bearer ${user.token}`)
     .send({
       name: 'Acc #1',
-      user_id: user.id,
     });
 
   expect(result.status).toBe(201);
@@ -32,7 +39,7 @@ test('Não deve inserir uma conta sem nome', async () => {
   const result = await request(app)
     .post(MAIN_ROUTE)
     .set('authorization', `Bearer ${user.token}`)
-    .send({ user_id: user.id });
+    .send({});
 
   expect(result.status).toBe(400);
   expect(result.body.error).toBe('Nome é um atributo obrigatório');
@@ -40,21 +47,21 @@ test('Não deve inserir uma conta sem nome', async () => {
 
 test.skip('Não deve inserir uma conta de nome duplicado, para o mesmo usuário', () => {});
 
-test('Deve listar todas as contas', async () => {
-  await app.db('accounts').insert({
-    name: 'Acc list',
-    user_id: user.id,
-  });
+test('Deve listar apenas as contas do usuário', async () => {
+  // Inserindo contas no banco de dados
+  await app.db('accounts').insert([
+    { name: 'Acc User #1', user_id: user.id },
+    { name: 'Acc User #2', user_id: user2.id },
+  ]);
 
   const res = await request(app)
     .get(MAIN_ROUTE)
     .set('authorization', `Bearer ${user.token}`);
 
   expect(res.status).toBe(200);
-  expect(res.body.length).toBeGreaterThan(0);
+  expect(res.body.length).toBe(1);
+  expect(res.body[0].name).toBe('Acc User #1');
 });
-
-test.skip('Deve listar apenas as contas do usuário', () => {});
 
 test('Deve retornar uma conta por Id', async () => {
   const acc = await app

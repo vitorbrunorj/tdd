@@ -6,7 +6,10 @@ module.exports = (app) => {
   // Rota para criar uma nova conta
   router.post('/', async (req, res, next) => {
     try {
-      const result = await app.services.account.save(req.body);
+      const result = await app.services.account.save({
+        ...req.body,
+        user_id: req.user.id,
+      });
       res.status(201).json(result[0]);
     } catch (err) {
       next(err);
@@ -16,7 +19,7 @@ module.exports = (app) => {
   // Rota para buscar todas as contas
   router.get('/', async (req, res, next) => {
     try {
-      const result = await app.services.account.findAll();
+      const result = await app.services.account.findAll(req.user.id);
       res.status(200).json(result);
     } catch (err) {
       next(err);
