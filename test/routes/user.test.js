@@ -4,6 +4,8 @@ const jwt = require('jwt-simple');
 const request = require('supertest');
 const app = require('../../src/app');
 
+const MAIN_ROUTE = '/v1/users';
+
 const mail = `${Date.now()}@email.com`;
 
 let user;
@@ -20,7 +22,7 @@ beforeAll(async () => {
 
 test('Deve listar todos os usuários', async () => {
   const res = await request(app)
-    .get('/users')
+    .get(MAIN_ROUTE)
     .set('authorization', `Bearer ${user.token}`);
 
   expect(res.status).toBe(200);
@@ -29,7 +31,7 @@ test('Deve listar todos os usuários', async () => {
 
 test('Deve inserir usuários com sucesso', async () => {
   const res = await request(app)
-    .post('/users')
+    .post(MAIN_ROUTE)
     .set('authorization', `Bearer ${user.token}`)
     .send({
       name: 'Rafael Suares',
@@ -44,7 +46,7 @@ test('Deve inserir usuários com sucesso', async () => {
 
 test('Deve armazenar senha criptografada', async () => {
   const res = await request(app)
-    .post('/users')
+    .post(MAIN_ROUTE)
     .set('authorization', `Bearer ${user.token}`)
     .send({
       name: 'Rafael Suares',
@@ -63,7 +65,7 @@ test('Deve armazenar senha criptografada', async () => {
 
 test('Não deve inserir usuário sem nome', async () => {
   const res = await request(app)
-    .post('/users')
+    .post(MAIN_ROUTE)
     .set('authorization', `Bearer ${user.token}`)
     .send({
       mail: 'padrado@gmail.com',
@@ -76,7 +78,7 @@ test('Não deve inserir usuário sem nome', async () => {
 
 test('Não deve inserir usuário sem email', async () => {
   const res = await request(app)
-    .post('/users')
+    .post(MAIN_ROUTE)
     .set('authorization', `Bearer ${user.token}`)
     .send({
       name: 'Rafael Suares',
@@ -88,7 +90,7 @@ test('Não deve inserir usuário sem email', async () => {
 
 test('Não deve inserir usuário sem senha', async () => {
   const res = await request(app)
-    .post('/users')
+    .post(MAIN_ROUTE)
     .set('authorization', `Bearer ${user.token}`)
     .send({
       name: 'Rafael Suares',
@@ -100,7 +102,7 @@ test('Não deve inserir usuário sem senha', async () => {
 
 test('Não deve inserir usuário com email existente', async () => {
   const res = await request(app)
-    .post('/users')
+    .post(MAIN_ROUTE)
     .set('authorization', `Bearer ${user.token}`)
     .send({
       name: 'Rafael Suares',
