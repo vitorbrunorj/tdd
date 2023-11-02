@@ -1,4 +1,6 @@
 /* eslint-disable implicit-arrow-linebreak */
+const ValidationError = require('../../src/errors/ValidationError');
+
 const request = require('supertest');
 const app = require('../../src/app');
 
@@ -24,7 +26,7 @@ test('Deve inserir usuários com sucesso', async () => {
 
 test('Não deve inserir usuário sem nome', async () => {
   const res = await request(app).post('/users').send({
-    mail: 'padrao@gmail.com',
+    mail: 'padrado@gmail.com',
     passwd: '123456',
   });
 
