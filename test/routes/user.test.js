@@ -22,6 +22,25 @@ test('Deve inserir usuários com sucesso', async () => {
 
   expect(res.status).toBe(201);
   expect(res.body.name).toBe('Rafael Suares');
+  expect(res.body).not.toHaveProperty('passwd');
+});
+
+test('Deve armazenar senha criptografada', async () => {
+  const res = await request(app)
+    .post('/users')
+    .send({
+      name: 'Rafael Suares',
+      mail: `${Date.now()}@email.com`,
+      passwd: '123456',
+    });
+
+  expect(res.status).toBe(201);
+
+  const { id } = res.body;
+  const userDB = await app.services.user.findOne({ id });
+
+  expect(userDB.passwd).not.toBeUndefined();
+  expect(userDB.passwd).not.toBe('123456');
 });
 
 test('Não deve inserir usuário sem nome', async () => {
