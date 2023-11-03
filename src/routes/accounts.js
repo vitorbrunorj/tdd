@@ -1,7 +1,25 @@
 const express = require('express');
 
+const RecursoIndevidoError = require('../errors/RecursoIndevidoError');
+
 module.exports = (app) => {
   const router = express.Router();
+
+  router.param('id', async (req, res, next) => {
+    try {
+      const acc = await app.services.account.find({
+        id: req.params.id,
+      });
+
+      if (acc.user_id !== req.user.id) {
+        throw new RecursoIndevidoError();
+      } else {
+        next();
+      }
+    } catch (err) {
+      next(err);
+    }
+  });
 
   // Rota para criar uma nova conta
   router.post('/', async (req, res, next) => {
